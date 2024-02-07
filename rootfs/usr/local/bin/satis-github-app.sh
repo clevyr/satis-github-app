@@ -27,7 +27,7 @@ token=$(curl -s -f -X POST \
   "https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens" \
   | jq -r '.token')
 
-COMPOSER_AUTH=$(jq -c --arg token "$token" '.github-oauth."github.com" = $token' /composer/auth.json)
+COMPOSER_AUTH=$(jq -c --arg token "$token" '."github-oauth"."github.com" = $token' /composer/auth.json)
 export COMPOSER_AUTH
 
 exec satis "$@"
