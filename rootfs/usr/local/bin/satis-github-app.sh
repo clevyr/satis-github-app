@@ -30,4 +30,10 @@ token=$(curl -s -f -X POST \
 COMPOSER_AUTH=$(jq -c --arg token "$token" '."github-oauth"."github.com" = $token' /composer/auth.json)
 export COMPOSER_AUTH
 
-exec satis "$@"
+satis "$@"
+
+curl -s -f -X DELETE \
+  -H "Authorization: Bearer $token" \
+  -H 'Accept: application/vnd.github+json' \
+  -H 'X-GitHub-Api-Version: 2022-11-28' \
+  https://api.github.com/installation/token
