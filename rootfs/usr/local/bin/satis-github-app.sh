@@ -30,6 +30,17 @@ token=$(curl -s -f -X POST \
   "https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens" \
   | jq -r '.token')
 
+function revoke() (
+  echo Revoking token >&2
+  curl -s -f -X DELETE \
+    -H "Authorization: Bearer $token" \
+    -H 'Accept: application/vnd.github+json' \
+    -H 'X-GitHub-Api-Version: 2022-11-28' \
+    https://api.github.com/installation/token
+)
+
+trap revoke EXIT
+
 echo Configuring Composer to use token >&2
 COMPOSER_AUTH=$(jq -c --arg token "$token" '."github-oauth"."github.com" = $token' /composer/auth.json)
 export COMPOSER_AUTH
@@ -37,9 +48,3 @@ export COMPOSER_AUTH
 echo Running Satis >&2
 satis "$@"
 
-echo Revoking token >&2
-curl -s -f -X DELETE \
-  -H "Authorization: Bearer $token" \
-  -H 'Accept: application/vnd.github+json' \
-  -H 'X-GitHub-Api-Version: 2022-11-28' \
-  https://api.github.com/installation/token
