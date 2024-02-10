@@ -13,7 +13,7 @@ header_json=$(jq -n '{"typ": "JWT", "alg": "RS256"}')
 header=$(echo -n "$header_json" | b64enc)
 
 # Payload
-payload_json=$(jq -n --arg appId "$APP_ID" '{"iat": (now - 60 | floor), "exp": (now + 600 | floor), "iss": $appId}')
+payload_json=$(jq -n --arg appId "$APP_ID" '{"iat": (now - 60 | floor), "exp": (now + 60 | floor), "iss": $appId}')
 payload=$(echo -n "$payload_json" | b64enc)
 
 # Signature
